@@ -1,0 +1,9 @@
+﻿  test.cpp
+G:\bianchen\zuoye\25_1_21\25_1_21\test.cpp(20,5): error C2556: “int add(int,int)”: 重载函数与“void add(int,int)”只是在返回类型上不同
+      G:\bianchen\zuoye\25_1_21\25_1_21\test.cpp(16,6):
+      参见“add”的声明
+  
+G:\bianchen\zuoye\25_1_21\25_1_21\test.cpp(20,5): error C2371: “add”: 重定义；不同的基类型
+      G:\bianchen\zuoye\25_1_21\25_1_21\test.cpp(16,6):
+      参见“add”的声明
+  
