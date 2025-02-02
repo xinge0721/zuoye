@@ -15,12 +15,16 @@ import android.view.View;
 import android.widget.Button;
 
 import java.net.InetAddress;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
 //    上下左右按键的定义
     Button btnUp,btnDown,btnLeft,btnRight;
     static String IPCar;
+
+    private User sock_con;
     /**
      * 界面控件初始化
      */
@@ -38,21 +42,21 @@ public class MainActivity extends AppCompatActivity {
         btnUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                sock_con.go(100,100);
             }
         });
         //下
         btnDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                sock_con.back(100,100);
             }
         });
         //左
         btnLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                sock_con.left(100);
             }
         });
 
@@ -60,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         btnRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                sock_con.right(100);
             }
         });
     }
@@ -113,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
             IPCar = "获取失败";
         }
     }
+    static ExecutorService executorServicetor = Executors.newCachedThreadPool();
 
     //主函数
     @Override
@@ -121,5 +126,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         control_init();
         wifi_Init();
+//        sock_con = new User();
+        executorServicetor.execute(() -> sock_con.connect(IPCar));
     }
+
+
 }
