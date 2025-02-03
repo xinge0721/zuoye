@@ -1,0 +1,8 @@
+<resources>
+    <!-- 按钮尺寸 -->
+    <dimen name="button_width">115dp</dimen>
+    <dimen name="button_height">80dp</dimen>
+    <!-- 间距 -->
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_medium">16dp</dimen>
+</resources>

@@ -9,10 +9,10 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.net.InetAddress;
 import java.util.concurrent.ExecutorService;
@@ -20,57 +20,45 @@ import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
-//    上下左右按键的定义
-    Button btnUp,btnDown,btnLeft,btnRight;
+    // 上下左右按键的定义
+    Button btnUp, btnDown, btnLeft, btnRight;
     static String IPCar;
+    TextView tv_alert; // 提示文本
 
     private User sock_con;
+    static ExecutorService executorServicetor = Executors.newCachedThreadPool();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // 初始化控件
+        control_init();
+
+        // 初始化WiFi
+//        wifi_Init();
+
+        // 连接Socket
+//        executorServicetor.execute(() -> sock_con.connect(IPCar));
+    }
+
     /**
      * 界面控件初始化
      */
-    private void control_init()
-    {
-        //赋值操作
-        btnUp = findViewById(R.id.btnUp);
-        btnDown = findViewById(R.id.btnDown);
-        btnLeft = findViewById(R.id.btnLeft);
-        btnRight  = findViewById(R.id.btnRight);
-
-        // 设置按钮点击事件
-
-        //上
-        btnUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sock_con.go(100,100);
-            }
-        });
-        //下
-        btnDown.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sock_con.back(100,100);
-            }
-        });
-        //左
-        btnLeft.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sock_con.left(100);
-            }
-        });
-
-        //右
-        btnRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sock_con.right(100);
-            }
-        });
+    private void control_init() {
+        // 赋值操作
+        btnUp = findViewById(R.id.btn2);    // 上
+        btnDown = findViewById(R.id.btn8);  // 下
+        btnLeft = findViewById(R.id.btn4);  // 左
+        btnRight = findViewById(R.id.btn6); // 右
+        tv_alert = findViewById(R.id.tv_alert); // 提示文本
     }
 
-    //WiFi初始化
-    // 需要权限：<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    /**
+     * WiFi初始化
+     * 需要权限：<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+     */
     private void wifi_Init() {
         try {
             // 1. 获取WifiManager服务
@@ -117,18 +105,40 @@ public class MainActivity extends AppCompatActivity {
             IPCar = "获取失败";
         }
     }
-    static ExecutorService executorServicetor = Executors.newCachedThreadPool();
 
-    //主函数
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        control_init();
-        wifi_Init();
-//        sock_con = new User();
-        executorServicetor.execute(() -> sock_con.connect(IPCar));
+    /**
+     * 按钮点击事件处理
+     */
+    public void myonClick(View v) {
+        int id = v.getId();
+
+        // 使用 if-else 代替 switch-case
+        if (id == R.id.btn1) {
+            tv_alert.setText("按键1 点击");
+        } else if (id == R.id.btn2) {
+            tv_alert.setText("按键2 点击");
+        } else if (id == R.id.btn3) {
+            tv_alert.setText("按键3 点击");
+        } else if (id == R.id.btn4) {
+            tv_alert.setText("按键4 点击");
+        } else if (id == R.id.btn5) {
+            tv_alert.setText("按键5 点击");
+        } else if (id == R.id.btn6) {
+            tv_alert.setText("按键6 点击");
+        } else if (id == R.id.btn7) {
+            tv_alert.setText("按键7 点击");
+        } else if (id == R.id.btn8) {
+            tv_alert.setText("按键8 点击");
+        } else if (id == R.id.btn9) {
+            tv_alert.setText("按键9 点击");
+        } else if (id == R.id.btn10) {
+            tv_alert.setText("按键10 点击");
+        } else if (id == R.id.btn11) {
+            tv_alert.setText("按键11 点击");
+        } else if (id == R.id.btn12) {
+            tv_alert.setText("按键12 点击");
+        } else {
+            tv_alert.setText("未知按键点击");
+        }
     }
-
-
 }

@@ -1,52 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="16dp">
+    android:background="@android:color/white">
 
-    <!-- 上按钮 -->
-    <Button
-        android:id="@+id/btnUp"
-        android:layout_width="100dp"
-        android:layout_height="60dp"
-        android:text="上"
-        android:layout_gravity="center_horizontal"
-        android:backgroundTint="@android:color/holo_blue_light"/>
-
-    <!-- 左右按钮的容器 -->
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <!-- 顶部提醒文本框 -->
+    <TextView
+        android:id="@+id/tv_alert"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp">
+        android:textSize="14sp"
+        android:padding="@dimen/margin_medium"
+        android:text="当前状态：设备已连接"
+        android:gravity="center"
+        android:background="@android:color/holo_blue_light"/>
 
-        <!-- 左按钮 -->
-        <Button
-            android:id="@+id/btnLeft"
-            android:layout_width="100dp"
-            android:layout_height="60dp"
-            android:text="左"
-            android:layout_marginEnd="16dp"
-            android:backgroundTint="@android:color/holo_blue_light"/>
+    <!-- 上方 1/3：图片显示区域 -->
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/ic_launcher"/>  <!-- 替换为实际图片 -->
+<!--    android:background="@android:color/darker_gray"/>-->
 
-        <!-- 右按钮 -->
-        <Button
-            android:id="@+id/btnRight"
-            android:layout_width="100dp"
-            android:layout_height="60dp"
-            android:text="右"
-            android:backgroundTint="@android:color/holo_blue_light"/>
+    <!-- 下方四行三列按键区域 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:orientation="vertical"
+        android:padding="@dimen/margin_medium"
+        android:gravity="center">
+
+        <!-- 第一行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/margin_medium"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btn1"
+                android:layout_width="@dimen/button_width"
+                android:layout_height="@dimen/button_height"
+                android:text="按钮1"
+                android:layout_marginEnd="@dimen/margin_small"/>
+
+            <Button
+                android:id="@+id/btn2"
+                android:layout_width="@dimen/button_width"
+                android:layout_height="@dimen/button_height"
+                android:text="前进"
+                android:layout_marginEnd="@dimen/margin_small"/>
+
+            <Button
+                android:id="@+id/btn3"
+                android:layout_width="@dimen/button_width"
+                android:layout_height="@dimen/button_height"
+                android:text="按钮3"/>
+        </LinearLayout>
+
+        <!-- 第二行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/margin_medium"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btn4"
+                android:layout_width="@dimen/button_width"
+                android:layout_height="@dimen/button_height"
+                android:text="左转"
+                android:layout_marginEnd="@dimen/margin_small"/>
+
+            <Button
+                android:id="@+id/btn5"
+                android:layout_width="@dimen/button_width"
+                android:layout_height="@dimen/button_height"
+                android:text="按钮5"
+                android:layout_marginEnd="@dimen/margin_small"/>
+
+            <Button
+                android:id="@+id/btn6"
+                android:layout_width="@dimen/button_width"
+                android:layout_height="@dimen/button_height"
+                android:text="按钮6"/>
+        </LinearLayout>
+
+        <!-- 第三行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/margin_medium"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btn7"
+                android:layout_width="@dimen/button_width"
+                android:layout_height="@dimen/button_height"
+                android:text="按钮7"
+                android:layout_marginEnd="@dimen/margin_small"/>
+
+            <Button
+                android:id="@+id/btn8"
+                android:layout_width="@dimen/button_width"
+                android:layout_height="@dimen/button_height"
+                android:text="按钮8"
+                android:layout_marginEnd="@dimen/margin_small"/>
+
+            <Button
+                android:id="@+id/btn9"
+                android:layout_width="@dimen/button_width"
+                android:layout_height="@dimen/button_height"
+                android:text="按钮9"/>
+        </LinearLayout>
+
+        <!-- 第四行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btn10"
+                android:layout_width="@dimen/button_width"
+                android:layout_height="@dimen/button_height"
+                android:text="按钮10"
+                android:layout_marginEnd="@dimen/margin_small"/>
+
+            <Button
+                android:id="@+id/btn11"
+                android:layout_width="@dimen/button_width"
+                android:layout_height="@dimen/button_height"
+                android:text="按钮11"
+                android:layout_marginEnd="@dimen/margin_small"/>
+
+            <Button
+                android:id="@+id/btn12"
+                android:layout_width="@dimen/button_width"
+                android:layout_height="@dimen/button_height"
+                android:text="按钮12"/>
+        </LinearLayout>
     </LinearLayout>
-
-    <!-- 下按钮 -->
-    <Button
-        android:id="@+id/btnDown"
-        android:layout_width="100dp"
-        android:layout_height="60dp"
-        android:text="下"
-        android:layout_gravity="center_horizontal"
-        android:backgroundTint="@android:color/holo_blue_light"/>
 </LinearLayout>
