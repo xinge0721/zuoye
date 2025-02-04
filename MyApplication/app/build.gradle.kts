@@ -32,12 +32,16 @@ android {
 }
 
 dependencies {
-
+    implementation (files("libs/camerautil.jar"))
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(files("libs\\camerautil.jar"))
+    implementation(files("libs\\camerautil.jar"))
+    implementation(files("libs\\camerautil.jar"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
 }

@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Context;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
 import android.net.NetworkInfo;
@@ -12,21 +13,43 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.net.InetAddress;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
     // 上下左右按键的定义
-    Button btnUp, btnDown, btnLeft, btnRight;
     static String IPCar;
     TextView tv_alert; // 提示文本
 
+    ImageView imageView;
     private User sock_con;
     static ExecutorService executorServicetor = Executors.newCachedThreadPool();
+
+
+    private final HashMap<Integer, String> buttonFunctions = new HashMap<Integer, String>() {{
+        // 数字键示例
+        put(R.id.btn1, "trafficlight");
+        put(R.id.btn2, "GO");
+        put(R.id.btn3, "horn");    // 喇叭
+        put(R.id.btn4, "left");   // 车灯
+        put(R.id.btn5, "STOP");   // 车灯
+        put(R.id.btn6, "right");   // 车灯
+        put(R.id.btn7, "light");   // 车灯
+        put(R.id.btn8, "back");   // 车灯
+        put(R.id.btn9, "light");   // 车灯
+        put(R.id.btn10, "light");   // 车灯
+        put(R.id.btn11, "light");   // 车灯
+        put(R.id.btn12, "light");   // 车灯
+
+        // ... 其他按钮继续添加
+    }};
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,22 +61,81 @@ public class MainActivity extends AppCompatActivity {
 
         // 初始化WiFi
 //        wifi_Init();
-
         // 连接Socket
 //        executorServicetor.execute(() -> sock_con.connect(IPCar));
     }
-
     /**
      * 界面控件初始化
      */
+    // 步骤2：动态绑定所有按钮
     private void control_init() {
-        // 赋值操作
-        btnUp = findViewById(R.id.btn2);    // 上
-        btnDown = findViewById(R.id.btn8);  // 下
-        btnLeft = findViewById(R.id.btn4);  // 左
-        btnRight = findViewById(R.id.btn6); // 右
-        tv_alert = findViewById(R.id.tv_alert); // 提示文本
+
+
+        tv_alert = findViewById(R.id.tv_alert); //初始化文本控件
+        imageView = findViewById(R.id.imageView);//初始化图片控件
+
+        // 获取所有需要绑定的按钮ID
+        int[] buttonIds = {
+                R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4,
+                R.id.btn5, R.id.btn6, R.id.btn7, R.id.btn8,
+                R.id.btn9, R.id.btn10, R.id.btn11, R.id.btn12
+                // ... 添加其他按钮ID
+        };
+
+        // 统一监听器
+        View.OnClickListener buttonListener = v -> {
+            // 通过映射表获取指令
+            String command = buttonFunctions.get(v.getId());
+
+            if (command != null) {
+                executeCommand(command); // 执行对应功能
+            }
+        };
+
+        // 动态绑定
+        for (int id : buttonIds) {
+            Button btn = findViewById(id);
+            if (btn != null) btn.setOnClickListener(buttonListener);
+        }
     }
+
+    // 步骤3：功能执行中心（在这里扩展功能）
+    private void executeCommand(String cmd) {
+        switch (cmd) {
+            case "GO":
+//                sock_con.go(100,100);
+                tv_alert.setText("前进");
+                break;
+            case "left":
+//                sock_con.left(100);
+                tv_alert.setText("左转");
+                break;
+            case "STOP":
+//                sock_con.stop();
+                tv_alert.setText("停下");
+                break;
+            case "right":
+//                sock_con.right(100);
+                tv_alert.setText("右转");
+                break;
+            case "back":
+//                sock_con.back(100,100);
+                tv_alert.setText("后退");
+                break;
+            case "trafficlight":{
+              if (IPCar != null && !IPCar.startsWith("错误")) {
+                    // 原代码中的后续逻辑
+                    IntentFilter intentFilter = new IntentFilter();
+                    intentFilter.addAction(A_S);
+                    registerReceiver(myBroadcastReceiver, intentFilter);
+                    cameraCommandUtil = new CameraCommandUtil();
+                    search(); // 启动摄像头搜索
+                }
+                break;}
+            // ... 其他功能分支
+        }
+    }
+
 
     /**
      * WiFi初始化
@@ -100,45 +182,11 @@ public class MainActivity extends AppCompatActivity {
             IPCar = inetAddress.getHostAddress();
             Log.i("WiFiInit", "成功获取网关IP: " + IPCar);
 
+
         } catch (Exception e) {
             Log.e("WiFiInit", "致命错误: " + e.getClass().getSimpleName() + " - " + e.getMessage());
             IPCar = "获取失败";
         }
     }
 
-    /**
-     * 按钮点击事件处理
-     */
-    public void myonClick(View v) {
-        int id = v.getId();
-
-        // 使用 if-else 代替 switch-case
-        if (id == R.id.btn1) {
-            tv_alert.setText("按键1 点击");
-        } else if (id == R.id.btn2) {
-            tv_alert.setText("按键2 点击");
-        } else if (id == R.id.btn3) {
-            tv_alert.setText("按键3 点击");
-        } else if (id == R.id.btn4) {
-            tv_alert.setText("按键4 点击");
-        } else if (id == R.id.btn5) {
-            tv_alert.setText("按键5 点击");
-        } else if (id == R.id.btn6) {
-            tv_alert.setText("按键6 点击");
-        } else if (id == R.id.btn7) {
-            tv_alert.setText("按键7 点击");
-        } else if (id == R.id.btn8) {
-            tv_alert.setText("按键8 点击");
-        } else if (id == R.id.btn9) {
-            tv_alert.setText("按键9 点击");
-        } else if (id == R.id.btn10) {
-            tv_alert.setText("按键10 点击");
-        } else if (id == R.id.btn11) {
-            tv_alert.setText("按键11 点击");
-        } else if (id == R.id.btn12) {
-            tv_alert.setText("按键12 点击");
-        } else {
-            tv_alert.setText("未知按键点击");
-        }
-    }
 }

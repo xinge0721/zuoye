@@ -9,9 +9,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import android.os.Handler;
-import android.os.Message;  // 确保 Message 也来自 android.os
 import android.util.Log;
-import android.widget.Toast;
 
 public class User {
     // 接受传感器
