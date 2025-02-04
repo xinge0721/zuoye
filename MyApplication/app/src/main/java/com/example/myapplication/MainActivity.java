@@ -16,10 +16,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bkrcl.control_car_video.camerautil.CameraCommandUtil;
+
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+// 导入自定义库和工具类
+import com.bkrcl.control_car_video.camerautil.CameraCommandUtil;
+import com.example.myapplication.utils.SearchService;
+import com.example.myapplication.utils.TrafficUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     ImageView imageView;
     private User sock_con;
+    private trafficlight tra;
     static ExecutorService executorServicetor = Executors.newCachedThreadPool();
 
 
@@ -58,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
 
         // 初始化控件
         control_init();
-
         // 初始化WiFi
 //        wifi_Init();
         // 连接Socket
@@ -123,14 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 tv_alert.setText("后退");
                 break;
             case "trafficlight":{
-              if (IPCar != null && !IPCar.startsWith("错误")) {
-                    // 原代码中的后续逻辑
-                    IntentFilter intentFilter = new IntentFilter();
-                    intentFilter.addAction(A_S);
-                    registerReceiver(myBroadcastReceiver, intentFilter);
-                    cameraCommandUtil = new CameraCommandUtil();
-                    search(); // 启动摄像头搜索
-                }
+                tra.trafficlight_Init(IPCar);
                 break;}
             // ... 其他功能分支
         }

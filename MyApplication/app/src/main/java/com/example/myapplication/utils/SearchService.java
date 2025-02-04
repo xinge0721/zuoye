@@ -8,7 +8,8 @@ import android.os.Message;
 
 import com.bkrcl.control_car_video.camerautil.SearchCameraUtil;
 
-import car.bkrc.cartrfficrec_demo.MainActivity;
+import com.example.myapplication.MainActivity;
+import com.example.myapplication.trafficlight;
 
 public class SearchService extends Service{
 	//搜索摄像头IP类
@@ -49,7 +50,7 @@ public class SearchService extends Service{
 	private Handler handler=new Handler(){
 		public void handleMessage(Message msg) {
 			if(msg.what==10){
-				Intent intent=new Intent(MainActivity.A_S);
+				Intent intent=new Intent(trafficlight.A_S);
 				intent.putExtra("IP", IP+":81");
 				sendBroadcast(intent);
 				SearchService.this.stopSelf();
