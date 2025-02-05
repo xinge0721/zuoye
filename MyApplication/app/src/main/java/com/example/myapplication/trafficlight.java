@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import static android.content.Context.RECEIVER_EXPORTED;
 import static android.content.Context.RECEIVER_NOT_EXPORTED;
 
 import android.annotation.SuppressLint;
@@ -61,11 +62,10 @@ public class trafficlight {
             phHandler.sendEmptyMessage(30);      // 更新UI显示摄像头IP
         }
     };
-    public trafficlight(Context context, ImageView image_show, TextView wifi_ip, TextView camera_ip, TextView show_news) {
+    public trafficlight(Context context,ImageView image_show,TextView wifi_ip,TextView camera_ip,TextView show_news) {
         this.context = context;
         this.image_show = image_show;
         this.wifi_ip = wifi_ip;
-        this.camera_ip = camera_ip;
         this.show_news = show_news;
     }
     /**
@@ -77,7 +77,13 @@ public class trafficlight {
             // 注册广播接收器
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(A_S);
-            context.registerReceiver(myBroadcastReceiver, intentFilter,RECEIVER_NOT_EXPORTED);
+            //这里的context.registerReceiver必须带有RECEIVER_NOT_EXPORTED或RECEIVER_EXPORTED，不然会产生报错
+            //即编译器不给通过
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                context.registerReceiver(myBroadcastReceiver, intentFilter, RECEIVER_NOT_EXPORTED);
+            } else {
+                context.registerReceiver(myBroadcastReceiver, intentFilter,RECEIVER_EXPORTED);
+            }
             cameraCommandUtil = new CameraCommandUtil();
             search(); // 启动搜索摄像头
         }
@@ -105,6 +111,7 @@ public class trafficlight {
      */
     private Thread phThread = new Thread(new Runnable() {
         @Override
+
         public void run() {
             Looper.prepare(); // 准备线程的Looper（用于Handler）
             while (true) {

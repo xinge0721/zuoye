@@ -26,6 +26,8 @@ import java.util.concurrent.Executors;
 import com.bkrcl.control_car_video.camerautil.CameraCommandUtil;
 import com.example.myapplication.utils.SearchService;
 import com.example.myapplication.utils.TrafficUtil;
+import com.example.myapplication.trafficlight;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -63,10 +65,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 初始化控件
+       // 初始化控件
         control_init();
         // 初始化WiFi
-//        wifi_Init();
+        wifi_Init();
         // 连接Socket
 //        executorServicetor.execute(() -> sock_con.connect(IPCar));
     }
@@ -77,8 +79,17 @@ public class MainActivity extends AppCompatActivity {
     private void control_init() {
 
 
-        tv_alert = findViewById(R.id.tv_alert); //初始化文本控件
+        tv_alert = findViewById(R.id.tv_alert1); //初始化文本控件
+        tv_alert = findViewById(R.id.tv_alert2); //初始化文本控件
         imageView = findViewById(R.id.imageView);//初始化图片控件
+
+        tra = new trafficlight(
+                this,
+                findViewById(R.id.imageView),  // 确保布局中存在此 ImageView
+                findViewById(R.id.tv_alert1),     // TextView 的 ID
+                findViewById(R.id.tv_alert2),     // TextView 的 ID
+                findViewById(R.id.tv_alert3)   // TextView 的 ID
+        );
 
         // 获取所有需要绑定的按钮ID
         int[] buttonIds = {

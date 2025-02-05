@@ -1,0 +1,86 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "G:\\bianchen\\zuoye\\25_2_5\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{36C2C013-9BF8-4F49-9BB9-EF3868829D02}|25_2_5\\25_2_5.vcxproj|G:\\bianchen\\zuoye\\25_2_5\\25_2_5\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{36C2C013-9BF8-4F49-9BB9-EF3868829D02}|25_2_5\\25_2_5.vcxproj|solutionrelative:25_2_5\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{36C2C013-9BF8-4F49-9BB9-EF3868829D02}|25_2_5\\25_2_5.vcxproj|G:\\bianchen\\zuoye\\25_2_5\\25_2_5\\or.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{36C2C013-9BF8-4F49-9BB9-EF3868829D02}|25_2_5\\25_2_5.vcxproj|solutionrelative:25_2_5\\or.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{36C2C013-9BF8-4F49-9BB9-EF3868829D02}|25_2_5\\25_2_5.vcxproj|G:\\bianchen\\zuoye\\25_2_5\\25_2_5\\or.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{36C2C013-9BF8-4F49-9BB9-EF3868829D02}|25_2_5\\25_2_5.vcxproj|solutionrelative:25_2_5\\or.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Windows Kits\\10\\Include\\10.0.22621.0\\um\\Instance.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "or.cpp",
+              "DocumentMoniker": "G:\\bianchen\\zuoye\\25_2_5\\25_2_5\\or.cpp",
+              "RelativeDocumentMoniker": "25_2_5\\or.cpp",
+              "ToolTip": "G:\\bianchen\\zuoye\\25_2_5\\25_2_5\\or.cpp",
+              "RelativeToolTip": "25_2_5\\or.cpp",
+              "ViewState": "AgIAAN8AAAAAAAAAAADwv+gAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-02-05T09:52:41.883Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "or.h",
+              "DocumentMoniker": "G:\\bianchen\\zuoye\\25_2_5\\25_2_5\\or.h",
+              "RelativeDocumentMoniker": "25_2_5\\or.h",
+              "ToolTip": "G:\\bianchen\\zuoye\\25_2_5\\25_2_5\\or.h",
+              "RelativeToolTip": "25_2_5\\or.h",
+              "ViewState": "AgIAAAkAAAAAAAAAAADwvxcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-02-05T12:40:08.34Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Instance.h",
+              "DocumentMoniker": "D:\\Windows Kits\\10\\Include\\10.0.22621.0\\um\\Instance.h",
+              "ToolTip": "D:\\Windows Kits\\10\\Include\\10.0.22621.0\\um\\Instance.h",
+              "ViewState": "AgIAAAYAAAAAAAAAAADwvw0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-02-05T09:53:27.306Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "main.cpp",
+              "DocumentMoniker": "G:\\bianchen\\zuoye\\25_2_5\\25_2_5\\main.cpp",
+              "RelativeDocumentMoniker": "25_2_5\\main.cpp",
+              "ToolTip": "G:\\bianchen\\zuoye\\25_2_5\\25_2_5\\main.cpp",
+              "RelativeToolTip": "25_2_5\\main.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-02-05T09:52:54.32Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
