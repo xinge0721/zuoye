@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -44,9 +46,6 @@ public class trafficlight {
     private String cameraIP;             // 摄像头IP地址
     private Bitmap bitmap = null;        // 当前显示的图像Bitmap
     private boolean flag = true;         // 控制摄像头图像获取线程的标志
-    private WifiManager wifiManager;     // WiFi管理器
-    private DhcpInfo dhcpInfo;           // DHCP信息（用于获取网关IP）
-    private String IPCar;                // 小车的网关IP（WiFi路由器IP）
     private CameraCommandUtil cameraCommandUtil; // 摄像头命令工具类
     private Context context; // 新增Context成员变量
 
@@ -72,11 +71,11 @@ public class trafficlight {
      * 初始化WiFi设置和摄像头搜索
      */
     public void trafficlight_Init(String IPCar) {
-        this.IPCar = IPCar;
         if (IPCar != null && !IPCar.startsWith("错误")) {
             // 注册广播接收器
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(A_S);
+
             //这里的context.registerReceiver必须带有RECEIVER_NOT_EXPORTED或RECEIVER_EXPORTED，不然会产生报错
             //即编译器不给通过
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -102,8 +101,16 @@ public class trafficlight {
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setMessage("正在搜索摄像头");
         progressDialog.show();
-        Intent intent = new Intent(context, SearchService.class); // 确保 SearchService 存在
-        context.startService(intent);
+        try {
+//        这行才是收索摄像头IP的关键，也是说刚刚收索的那个IP吊用没有
+            Intent intent = new Intent(context, SearchService.class); // 确保 SearchService 存在
+//        发送广播，启用myBroadcastReceiver
+            context.startService(intent); // 启动SearchService服务
+            Log.d("SearchService", "启动成功！"); // 成功日志
+        } catch (Exception e) {
+            // 捕获异常并打印错误信息
+            Log.e("SearchService", "服务启动失败: " + e.getMessage());
+        }
     }
 
     /**
@@ -127,14 +134,21 @@ public class trafficlight {
     /**
      * Handler：处理线程发送的消息并更新UI
      */
-    public Handler phHandler = new Handler(Looper.getMainLooper()) { // 使用主线程 Looper
+    @SuppressLint("HandlerLeak")
+    public Handler phHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case 40:
-                    show_news.setText("红色：" + colorData[0] + ", 绿色：" + colorData[1] + ", 黄色：" + colorData[2] + "\n信号灯颜色：" + TrafficUtil.sort(colorData));
+                case 10:
+                    show_news.setText("图像已去色"); // 测试用提示
+                    image_show.setImageBitmap(bitmap); // 更新显示图像
                     break;
-                // 其他 case...
+                case 30:
+                    camera_ip.setText(cameraIP); // 显示摄像头的IP地址
+                    break;
+                case 40:
+                    show_news.setText("图像已加载"); // 提示图像已加载
+                    break;
             }
         }
     };
@@ -157,6 +171,21 @@ public class trafficlight {
     }
 
     private int colorData[] = new int[3]; // 存储红、绿、黄的像素数量
+    /**
+     * 获取颜色识别结果的getter方法
+     * @return 返回红、绿、黄的像素数量数组
+     */
+    public int[] getColorData() {
+        return colorData; // 返回颜色数据数组
+    }
+
+    /**
+     * 获取识别的信号灯颜色
+     * @return 返回信号灯的颜色字符串（红色、绿色、黄色）
+     */
+    public String getSignalColor() {
+        return TrafficUtil.sort(colorData); // 返回颜色识别结果
+    }
 
     /**
      * 第二步：识别交通灯颜色
@@ -167,6 +196,29 @@ public class trafficlight {
             // 使用 Handler 发送消息到主线程
             phHandler.sendEmptyMessage(40); // 新增一个消息类型
         }).start();
+    }
+
+    public void myonClick(int v) {
+        if (v == 1) { // 第8步：点击“开始识别”按钮
+            if (bitmap != null) {
+                decolouring(bitmap);
+                System.out.println("正在识别");
+            } else {
+                Log.e("SearchService","无图片加载\n请重启摄像头或加载本地图片"); // 如果没有图片，提示用户
+            }
+//        } else if (v.getId() == R.id.btn_1) { // 第10步：加载本地红灯图片
+//            bitmap = getBitmap(getApplication(), R.mipmap.redlight); // 获取红灯图片
+//            image_show.setImageBitmap(bitmap); // 设置ImageView的显示图像
+//            phHandler.sendEmptyMessage(40); // 第11步：更新UI显示“图像已加载”
+//        } else if (v.getId() == R.id.btn_2) { // 第12步：加载黄灯图片
+//            bitmap = getBitmap(getApplication(), R.mipmap.yellowlight); // 获取黄灯图片
+//            image_show.setImageBitmap(bitmap); // 设置ImageView的显示图像
+//            phHandler.sendEmptyMessage(40); // 第13步：更新UI显示“图像已加载”
+//        } else if (v.getId() == R.id.btn_3) { // 第14步：加载绿灯图片
+//            bitmap = getBitmap(getApplication(), R.mipmap.greenlight); // 获取绿灯图片
+//            image_show.setImageBitmap(bitmap); // 设置ImageView的显示图像
+//            phHandler.sendEmptyMessage(40); // 第15步：更新UI显示“图像已加载”
+        }
     }
 
     /**

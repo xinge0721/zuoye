@@ -1,7 +1,6 @@
 package com.example.myapplication;
 
 import android.content.Context;
-import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
 import android.net.NetworkInfo;
@@ -16,17 +15,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bkrcl.control_car_video.camerautil.CameraCommandUtil;
 
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-// 导入自定义库和工具类
-import com.bkrcl.control_car_video.camerautil.CameraCommandUtil;
-import com.example.myapplication.utils.SearchService;
-import com.example.myapplication.utils.TrafficUtil;
-import com.example.myapplication.trafficlight;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -70,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         // 初始化WiFi
         wifi_Init();
         // 连接Socket
-//        executorServicetor.execute(() -> sock_con.connect(IPCar));
+        executorServicetor.execute(() -> sock_con.connect(IPCar));
     }
     /**
      * 界面控件初始化
@@ -141,6 +135,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case "trafficlight":{
                 tra.trafficlight_Init(IPCar);
+                tra.myonClick(1);
+
                 break;}
             // ... 其他功能分支
         }
