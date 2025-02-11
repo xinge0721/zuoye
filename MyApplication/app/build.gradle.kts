@@ -33,12 +33,13 @@ android {
 
 dependencies {
     implementation (files("libs/camerautil.jar"))
+
+    implementation("com.google.zxing:core:3.5.2") // 或 3.5.2 // 多二维码识别核心库，移植时请复制本行代码
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    implementation(files("libs\\camerautil.jar"))
-    implementation(files("libs\\camerautil.jar"))
     implementation(files("libs\\camerautil.jar"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
