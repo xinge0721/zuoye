@@ -69,14 +69,14 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btn1"
+                android:id="@+id/trafficlight"
                 android:layout_width="@dimen/button_width"
                 android:layout_height="@dimen/button_height"
                 android:layout_marginEnd="@dimen/margin_small"
-                android:text="按钮1" />
+                android:text="开启录像" />
 
             <Button
-                android:id="@+id/btn2"
+                android:id="@+id/go"
                 android:layout_width="@dimen/button_width"
                 android:layout_height="@dimen/button_height"
                 android:layout_marginEnd="@dimen/margin_small"
@@ -98,24 +98,24 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btn4"
+                android:id="@+id/left"
                 android:layout_width="@dimen/button_width"
                 android:layout_height="@dimen/button_height"
                 android:layout_marginEnd="@dimen/margin_small"
                 android:text="左转" />
 
             <Button
-                android:id="@+id/btn5"
+                android:id="@+id/Stop"
                 android:layout_width="@dimen/button_width"
                 android:layout_height="@dimen/button_height"
                 android:layout_marginEnd="@dimen/margin_small"
-                android:text="按钮5" />
+                android:text="停止" />
 
             <Button
-                android:id="@+id/btn6"
+                android:id="@+id/right"
                 android:layout_width="@dimen/button_width"
                 android:layout_height="@dimen/button_height"
-                android:text="按钮6" />
+                android:text="右转" />
         </LinearLayout>
 
         <!-- 第三行 -->
@@ -134,11 +134,11 @@
                 android:text="按钮7" />
 
             <Button
-                android:id="@+id/btn8"
+                android:id="@+id/back"
                 android:layout_width="@dimen/button_width"
                 android:layout_height="@dimen/button_height"
                 android:layout_marginEnd="@dimen/margin_small"
-                android:text="按钮8" />
+                android:text="后退" />
 
             <Button
                 android:id="@+id/btn9"

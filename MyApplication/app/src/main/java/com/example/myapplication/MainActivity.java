@@ -37,14 +37,15 @@ public class MainActivity extends AppCompatActivity {
 
     private final HashMap<Integer, String> buttonFunctions = new HashMap<Integer, String>() {{
         // 数字键示例
-        put(R.id.btn1, "trafficlight");
-        put(R.id.btn2, "GO");
+        put(R.id.trafficlight, "trafficlight");//摄像头开启
+        put(R.id.go, "GO");
+        put(R.id.left, "left");   // 车灯
+        put(R.id.Stop, "STOP");   // 车灯
+        put(R.id.right, "right");   // 车灯
+        put(R.id.back, "back");   // 车灯
+
         put(R.id.btn3, "horn");    // 喇叭
-        put(R.id.btn4, "left");   // 车灯
-        put(R.id.btn5, "STOP");   // 车灯
-        put(R.id.btn6, "right");   // 车灯
         put(R.id.btn7, "light");   // 车灯
-        put(R.id.btn8, "back");   // 车灯
         put(R.id.btn9, "light");   // 车灯
         put(R.id.btn10, "light");   // 车灯
         put(R.id.btn11, "light");   // 车灯
@@ -87,10 +88,18 @@ public class MainActivity extends AppCompatActivity {
 
         // 获取所有需要绑定的按钮ID
         int[] buttonIds = {
-                R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4,
-                R.id.btn5, R.id.btn6, R.id.btn7, R.id.btn8,
-                R.id.btn9, R.id.btn10, R.id.btn11, R.id.btn12
-                // ... 添加其他按钮ID
+                R.id.trafficlight,
+                R.id.go,
+                R.id.left,
+                R.id.Stop,
+                R.id.right,
+                R.id.back,
+                R.id.btn3,
+                R.id.btn7,
+                R.id.btn9,
+                R.id.btn10,
+                R.id.btn11,
+                R.id.btn12
         };
 
         // 统一监听器
@@ -136,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
             case "trafficlight":{
                 tra.trafficlight_Init(IPCar);
                 tra.myonClick(1);
-
                 break;}
             // ... 其他功能分支
         }
