@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">4_OpenCV_PicChang</string>
+    <string name="hsv_hsv">①调整二值化最低阈值区间；②调整二值化最高阈值区间；③对图像进行二值化处理；④对图像进行不同程度的腐蚀和膨胀化处理，可实现去除掉图像噪点；⑤完成噪点去除后点击边缘检测就可以框出根据HSV阈值的标定识别到此区域物体的轮廓，通过调整HSV三个通道的最低和最高值。</string>
+</resources>
