@@ -1,4 +1,4 @@
-package car.bkrc.com;
+package car.bkrc.com.utils;
 
 import android.app.Service;
 import android.content.Intent;
@@ -8,6 +8,8 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.bkrcl.control_car_video.camerautil.SearchCameraUtil;
+
+import car.bkrc.com.MainActivity;
 
 public class SearchService extends Service{
 	//搜索摄像头IP类

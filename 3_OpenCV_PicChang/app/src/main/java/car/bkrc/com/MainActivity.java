@@ -18,15 +18,22 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
+    private opencv cv;
+    private User sock_con;
 
-    TextView tv_alert1; // 提示文本
-    TextView tv_alert2; // 提示文本
+
+    public TextView tv_alert1; // 提示文本
+    public TextView tv_alert2; // 提示文本
+    static String IPCar;
 
     ImageView imageView;
     // 广播名称
     public static final String A_S = "com.a_s";
+    static ExecutorService executorServicetor = Executors.newCachedThreadPool();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         OpenCVLoader.initDebug();
         control_init();
         initOpenCV();
+        executorServicetor.execute(() -> sock_con.connect(IPCar));
     }
     private final HashMap<Integer, String> buttonFunctions = new HashMap<Integer, String>() {{
         // 数字键示例
@@ -55,18 +63,6 @@ public class MainActivity extends AppCompatActivity {
         // ... 其他按钮继续添加
     }};
 
-    private void initOpenCV() {
-        if (OpenCVLoader.initDebug()) {
-            // 使用JniLibs文件夹下的动态库初始化OpenCV
-            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-        }
-    }
-    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-
-        }
-    };
     /**
      * 界面控件初始化
      */
@@ -135,16 +131,30 @@ public class MainActivity extends AppCompatActivity {
                 tv_alert1.setText("后退");
                 break;
             case "trafficlight":{
-                if (OpenCVLoader.initDebug()) {
-                    tv_alert1.setText("OpenCV加载成功!");
-                }
-                else
-                {
-                    tv_alert1.setText("OpenCV加载失败!");
-                }
+                initOpenCV();
                 break;}
             // ... 其他功能分支
         }
     }
 
+
+
+    /**
+     * 初始化OpenCV
+     */
+    private void initOpenCV() {
+        if (OpenCVLoader.initDebug()) {
+            Log.d("OpenCV", "初始化成功");
+            // 使用JniLibs文件夹下的动态库初始化OpenCV
+            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+        }
+        else
+            Log.d("OpenCV", "初始化失败");
+    }
+
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+        }
+    };
 }

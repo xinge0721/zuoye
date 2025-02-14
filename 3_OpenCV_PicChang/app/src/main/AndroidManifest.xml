@@ -28,7 +28,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <service android:name="car.bkrc.com.SearchService" />
+        <service android:name="car.bkrc.com.utils.SearchService" />
     </application>
 
 </manifest>
