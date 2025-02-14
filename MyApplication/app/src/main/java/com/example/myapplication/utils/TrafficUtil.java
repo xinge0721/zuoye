@@ -6,7 +6,6 @@ import android.util.Log;
 
 public class TrafficUtil {
 
-
     /**
      * 第一步 像素处理背景变为白色，红、绿、蓝、黄、品、青、黑色，白色不变
      * @param bip
