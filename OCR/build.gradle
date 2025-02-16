@@ -1,0 +1,29 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+ext {
+    libs = [
+            appcompat: "androidx.appcompat:appcompat:1.6.1",
+            material: "com.google.android.material:material:1.9.0",
+            activity: "androidx.activity:activity-ktx:1.7.2",
+            constraintlayout: "androidx.constraintlayout:constraintlayout:2.1.4",
+            junit: "junit:junit:4.13.2",
+            extJunit: "androidx.test.ext:junit:1.1.5",
+            espressoCore: "androidx.test.espresso:espresso-core:3.5.1"
+    ]
+}

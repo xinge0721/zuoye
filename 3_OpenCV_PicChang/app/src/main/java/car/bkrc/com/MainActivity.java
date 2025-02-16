@@ -3,142 +3,211 @@ package car.bkrc.com;  // 定义包名
 import androidx.appcompat.app.AppCompatActivity;  // 引入AppCompatActivity类
 import android.os.Bundle;  // 引入Bundle类
 import android.util.Log;  // 引入Log类，用于调试输出
-import android.view.View;  // 引入View类，表示UI组件
 import android.widget.Button;  // 引入Button类
-import android.widget.ImageView;  // 引入ImageView类，用于显示图片
 import android.widget.TextView;  // 引入TextView类，用于显示文本
-import org.opencv.android.BaseLoaderCallback;  // 引入OpenCV的BaseLoaderCallback类
-import org.opencv.android.LoaderCallbackInterface;  // 引入OpenCV的LoaderCallbackInterface类
 import org.opencv.android.OpenCVLoader;  // 引入OpenCV的OpenCVLoader类
-import java.util.HashMap;  // 引入HashMap类，用于映射按钮ID和功能
-import java.util.concurrent.ExecutorService;  // 引入ExecutorService类，用于线程池管理
-import java.util.concurrent.Executors;  // 引入Executors类，用于创建线程池
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.net.Uri;
+import android.provider.MediaStore;
+import com.googlecode.tesseract.android.TessBaseAPI;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "OCR_APP";
+    private static final int PERMISSION_REQUEST = 100;
+    private static final int PICK_IMAGE = 200;
+    Button selectBtn;
 
-public class MainActivity extends AppCompatActivity {  // 主活动类，继承AppCompatActivity
-    private User sock_con = new User();  // 声明User对象，用于与硬件设备通信
+    private Bitmap processedBitmap;
+    private TextView resultText;
+    private TessBaseAPI tessBaseAPI;
 
-    public TextView tv_alert1;  // 声明TextView对象，显示提示文本1
-    public TextView tv_alert2;  // 声明TextView对象，显示提示文本2
-    static String IPCar;  // 声明IP地址字符串，指向车载设备
-
-    ImageView imageView;  // 声明ImageView对象，用于显示摄像头画面
-    public static final String A_S = "com.a_s";  // 定义广播名称A_S
-    static ExecutorService executorServicetor = Executors.newCachedThreadPool();  // 创建一个线程池
+    static {
+        if (!OpenCVLoader.initDebug()) {
+            Log.e("OpenCV", "初始化失败");
+        } else {
+            Log.d("OpenCV", "初始化成功");
+        }
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {  // onCreate方法，用于初始化活动
-        super.onCreate(savedInstanceState);  // 调用父类onCreate方法
-        setContentView(R.layout.activity_main);  // 设置活动布局
-        OpenCVLoader.initDebug();  // 初始化OpenCV
-        control_init();  // 调用控件初始化方法
-        initOpenCV();  // 调用OpenCV初始化方法
-        executorServicetor.execute(() -> sock_con.connect(IPCar));  // 使用线程池连接到IPCar
-    }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-    // 创建按钮ID与功能命令的映射关系
-    private final HashMap<Integer, String> buttonFunctions = new HashMap<Integer, String>() {{
-        put(R.id.trafficlight, "camera");  // 按钮：交通信号灯
-        put(R.id.go, "GO");  // 按钮：前进
-        put(R.id.left, "left");  // 按钮：左转
-        put(R.id.Stop, "STOP");  // 按钮：停车
-        put(R.id.right, "right");  // 按钮：右转
-        put(R.id.back, "back");  // 按钮：后退
+        selectBtn = findViewById(R.id.btn_select);
+        resultText = findViewById(R.id.tv_result);
 
-        put(R.id.btn3, "horn");  // 按钮：喇叭
-        put(R.id.btn7, "light");  // 按钮：车灯
-        put(R.id.btn9, "light");  // 按钮：车灯
-        put(R.id.btn10, "light");  // 按钮：车灯
-        put(R.id.btn11, "light");  // 按钮：车灯
-        put(R.id.btn12, "light");  // 按钮：车灯
-        // 可以继续添加其他按钮
-    }};
+        // 初始化Tesseract
+        initTesseract();
 
-    /**
-     * 界面控件初始化
-     */
-    private void control_init() {  // 控件初始化方法
-
-        tv_alert1 = findViewById(R.id.tv_alert1);  // 获取提示文本1控件
-        tv_alert2 = findViewById(R.id.tv_alert2);  // 获取提示文本2控件
-        imageView = findViewById(R.id.imageView);  // 获取图片显示控件
-
-        // 获取所有需要绑定的按钮ID
-        int[] buttonIds = {
-                R.id.trafficlight,
-                R.id.go,
-                R.id.left,
-                R.id.Stop,
-                R.id.right,
-                R.id.back,
-                R.id.btn3,
-                R.id.btn7,
-                R.id.btn9,
-                R.id.btn10,
-                R.id.btn11,
-                R.id.btn12
-        };
-
-        // 创建按钮点击监听器
-        View.OnClickListener buttonListener = v -> {
-            String command = buttonFunctions.get(v.getId());  // 获取按钮对应的命令
-            if (command != null) {
-                executeCommand(command);  // 执行命令
+        selectBtn.setOnClickListener(v -> {
+            if (checkPermissions()) {
+                selectImage();
             }
-        };
-
-        // 动态绑定按钮点击事件
-        for (int id : buttonIds) {  // 遍历所有按钮ID
-            Button btn = findViewById(id);  // 获取按钮对象
-            if (btn != null) btn.setOnClickListener(buttonListener);  // 为按钮设置点击监听器
-        }
+        });
     }
 
-    // 执行命令的功能中心
-    private void executeCommand(String cmd) {  // 根据命令执行不同功能
-        switch (cmd) {  // 根据命令不同执行不同操作
-            case "GO":  // 前进命令
-                sock_con.go(100,100);  // 执行前进操作
-                tv_alert1.setText("前进");  // 显示前进提示
-                break;
-            case "left":  // 左转命令
-                sock_con.left(100);  // 执行左转操作
-                tv_alert1.setText("左转");  // 显示左转提示
-                break;
-            case "STOP":  // 停止命令
-                sock_con.stop();  // 执行停止操作
-                tv_alert1.setText("停下");  // 显示停止提示
-                break;
-            case "right":  // 右转命令
-//                sock_con.right(100);  // 执行右转操作
-                tv_alert1.setText("右转");  // 显示右转提示
-                break;
-            case "back":  // 后退命令
-                sock_con.back(100,100);  // 执行后退操作
-                tv_alert1.setText("后退");  // 显示后退提示
-                break;
-            case "camera": {  // 交通信号灯命令
-                initOpenCV();  // 初始化OpenCV
-                break;
+    private void initTesseract() {
+        tessBaseAPI = new TessBaseAPI();
+        String dataPath = getExternalFilesDir("/").getAbsolutePath() + "/";
+        File dir = new File(dataPath + "tessdata/");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        // 复制训练数据（需预先将eng.traineddata放入assets）
+        try {
+            InputStream in = getAssets().open("eng.traineddata");
+            OutputStream out = new FileOutputStream(dataPath + "tessdata/eng.traineddata");
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
             }
-            // 可以继续添加其他功能
+            out.flush();
+            out.close();
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        tessBaseAPI.init(dataPath, "eng");
+    }
+
+    private boolean checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    PERMISSION_REQUEST);
+            return false;
+        }
+        return true;
+    }
+
+    private void selectImage() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, PICK_IMAGE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
+            try {
+                Uri uri = data.getData();
+                Bitmap originalBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+
+                // 预处理流程
+                Bitmap rotatedBitmap = autoRotateBitmap(uri, originalBitmap);
+                Bitmap preprocessedBitmap = preprocessImage(rotatedBitmap);
+                processedBitmap = removeNoise(preprocessedBitmap);
+
+                // OCR识别
+                recognizeText(processedBitmap);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    /**
-     * 初始化OpenCV
-     */
-    private void initOpenCV() {  // 初始化OpenCV的方法
-        if (OpenCVLoader.initDebug()) {  // 检查OpenCV是否成功初始化
-            Log.d("OpenCV", "初始化成功");  // 如果初始化成功，输出日志
-            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);  // 调用成功回调
-        } else {  // 如果初始化失败
-            Log.d("OpenCV", "初始化失败");  // 输出失败日志
+    private Bitmap autoRotateBitmap(Uri uri, Bitmap bitmap) throws IOException {
+        ExifInterface exif = new ExifInterface(getContentResolver().openInputStream(uri));
+        int orientation = exif.getAttributeInt(
+                ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+
+        Matrix matrix = new Matrix();
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.postRotate(90);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.postRotate(180);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.postRotate(270);
+                break;
+            default:
+                return bitmap;
+        }
+
+        return Bitmap.createBitmap(bitmap, 0, 0,
+                bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
+    private Bitmap preprocessImage(Bitmap input) {
+        Mat src = new Mat();
+        Utils.bitmapToMat(input, src);
+
+        // 转为灰度图
+        Imgproc.cvtColor(src, src, Imgproc.COLOR_RGB2GRAY);
+
+        // 自适应阈值二值化
+        Mat binary = new Mat();
+        Imgproc.adaptiveThreshold(src, binary, 255,
+                Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C,
+                Imgproc.THRESH_BINARY, 15, 12);
+
+        Bitmap output = Bitmap.createBitmap(binary.cols(), binary.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(binary, output);
+        return output;
+    }
+
+    private Bitmap removeNoise(Bitmap input) {
+        Mat src = new Mat();
+        Utils.bitmapToMat(input, src);
+
+        // 中值滤波降噪
+        Mat denoised = new Mat();
+        Imgproc.medianBlur(src, denoised, 3);
+
+        // 形态学开运算降噪
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new org.opencv.core.Size(1,1));
+        Imgproc.morphologyEx(denoised, denoised, Imgproc.MORPH_OPEN, kernel);
+
+        Bitmap output = Bitmap.createBitmap(denoised.cols(), denoised.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(denoised, output);
+        return output;
+    }
+
+    private void recognizeText(Bitmap bitmap) {
+        tessBaseAPI.setImage(bitmap);
+        String result = tessBaseAPI.getUTF8Text();
+        resultText.setText(result);
+        tessBaseAPI.clear();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                selectImage();
+            }
         }
     }
 
-    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {  // 创建OpenCV加载回调
-        @Override
-        public void onManagerConnected(int status) {  // 连接成功后的回调方法
-        }
-    };
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        tessBaseAPI.end();
+    }
 }
