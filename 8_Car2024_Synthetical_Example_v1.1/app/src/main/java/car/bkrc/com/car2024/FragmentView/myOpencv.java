@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.Log;
 import android.widget.ImageView;  // 导入ImageView类，用于显示图像
 
 
@@ -22,9 +23,13 @@ import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.core.*;
+import org.opencv.imgcodecs.Imgcodecs;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class OpencvUtils {
 
@@ -220,14 +225,12 @@ class OpencvUtils {
 
 
     }
-
-
-
 }
 
 public class myOpencv {  // 声明一个名为opencv的公共类
     private Bitmap bitmap = null;  // 声明一个Bitmap对象用于保存图像数据，初始化为空
     public Mat inrangeMat = null;  // 声明一个Mat对象用于保存图像的处理结果，初始化为空
+
 
     /**
      * 检测根据hsv 提取到图像的轮廓
@@ -387,5 +390,225 @@ public class myOpencv {  // 声明一个名为opencv的公共类
         } else {
             return BitmapFactory.decodeResource(context.getResources(), vectorDrawableId);
         }
+    }
+
+
+    /** 核心调用接口 */
+    public static String detect(Bitmap input) {
+        ShapeColorDetector detector = new ShapeColorDetector();
+        return detector.processBitmap(input);
+    }
+
+    /** 文件路径版本的重载 */
+    public static String detect(String imagePath) {
+        ShapeColorDetector detector = new ShapeColorDetector();
+        return detector.processImage(imagePath);
+    }
+
+
+}
+
+class ShapeColorDetector {
+    private static final double COLOR_THRESHOLD = 50;
+    private static final double CIRCULARITY_THRESHOLD = 0.78;
+    private static final double MIN_CONTOUR_AREA = 100;
+//    定义了各个颜色
+    private final Map<String, Scalar> colorMap = new HashMap<String, Scalar>() {{
+        put("red", new Scalar(0, 0, 255));
+        put("green", new Scalar(0, 255, 0));
+        put("blue", new Scalar(255, 0, 0));
+        put("yellow", new Scalar(0, 255, 255));
+        put("magenta", new Scalar(255, 0, 255));
+        put("cyan", new Scalar(255, 255, 0));
+        put("black", new Scalar(0, 0, 0));
+    }};
+
+    public String processBitmap(Bitmap bitmap) {
+        Mat src = new Mat();
+        Utils.bitmapToMat(bitmap, src);
+        Imgproc.cvtColor(src, src, Imgproc.COLOR_RGBA2BGR); // ▲ 颜色转换
+
+        if (src.empty()) return "Error loading image";
+
+        Mat processed = preprocessImage(src);
+        List<MatOfPoint> contours = findContours(processed);
+
+        int[] counts = new int[5];
+
+        for (MatOfPoint contour : contours) {
+            if (Imgproc.contourArea(contour) < MIN_CONTOUR_AREA) continue;
+
+            String shape = detectShape(contour);
+            String color = detectColor(src, contour);
+
+            if (shape != null && color != null) {
+                switch (shape) {
+                    case "rectangle": counts[0]++; break;
+                    case "circle": counts[1]++; break;
+                    case "triangle": counts[2]++; break;
+                    case "diamond": counts[3]++; break;
+                    case "star": counts[4]++; break;
+                }
+            }
+            contour.release(); // ▼ 循环内释放每个contour的内存
+        }
+    // ▼ 强制释放所有OpenCV对象
+    src.release();
+    processed.release();
+
+//    Log.d("COLOR_DEBUG", "BGR均值 → B:" + mean.val[0] + " G:" + mean.val[1] + " R:" + mean.val[2]);
+
+    return String.format("a:%d,b:%d,c:%d,d:%d,e:%d", counts[0], counts[1], counts[2], counts[3], counts[4]);
+}
+//    形状识别函数关键
+    public String processImage(String imagePath) {
+        Mat src = Imgcodecs.imread(imagePath);
+        if (src.empty()) return "Error loading image";
+
+        Mat processed = preprocessImage(src);
+        List<MatOfPoint> contours = findContours(processed);
+
+        int[] counts = new int[5]; // a,b,c,d,e
+
+        for (MatOfPoint contour : contours) {
+            if (Imgproc.contourArea(contour) < MIN_CONTOUR_AREA) continue;
+
+            String shape = detectShape(contour);
+            String color = detectColor(src, contour);
+
+            if (shape != null && color != null) {
+                switch (shape) {
+                    case "rectangle": counts[0]++; break;
+                    case "circle": counts[1]++; break;
+                    case "triangle": counts[2]++; break;
+                    case "diamond": counts[3]++; break;
+                    case "star": counts[4]++; break;
+                }
+            }
+        }
+
+        return String.format("a:%d,b:%d,c:%d,d:%d,e:%d",
+                counts[0], counts[1], counts[2], counts[3], counts[4]);
+    }
+
+    private Mat preprocessImage(Mat src) {
+        Mat gray = new Mat();
+        Mat blurred = new Mat();
+        Mat edges = new Mat();
+
+        Imgproc.cvtColor(src, gray, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.GaussianBlur(gray, blurred, new Size(5, 5), 0);
+        Imgproc.Canny(blurred, edges, 50, 150);
+
+        return edges;
+    }
+
+    private List<MatOfPoint> findContours(Mat edges) {
+        List<MatOfPoint> contours = new ArrayList<>();
+        Mat hierarchy = new Mat();
+        Imgproc.findContours(edges, contours, hierarchy,
+                Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        return contours;
+    }
+
+    private String detectShape(MatOfPoint contour) {
+        MatOfPoint2f approx = new MatOfPoint2f();
+        MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
+
+        double epsilon = 0.02 * Imgproc.arcLength(contour2f, true);
+        Imgproc.approxPolyDP(contour2f, approx, epsilon, true);
+
+        int vertices = approx.toArray().length;
+
+        if (vertices == 3) return "triangle";
+        if (vertices == 4) return detectQuadrilateral(contour, approx);
+        if (vertices > 4 && isStar(contour)) return "star";
+
+        return isCircle(contour) ? "circle" : null;
+    }
+
+    private String detectQuadrilateral(MatOfPoint contour, MatOfPoint2f approx) {
+        Rect rect = Imgproc.boundingRect(contour);
+        double ratio = (double)rect.width/rect.height;
+
+        // 正方形判断
+        if (ratio >= 0.95 && ratio <= 1.05) return "rectangle";
+
+        // 菱形判断
+        Point[] points = approx.toArray();
+        double[] lengths = new double[4];
+        for (int i=0; i<4; i++) {
+            Point p1 = points[i], p2 = points[(i+1)%4];
+            lengths[i] = Math.sqrt(Math.pow(p2.x-p1.x, 2) + Math.pow(p2.y-p1.y, 2));
+        }
+
+        boolean isRhombus = true;
+        for (int i=1; i<4; i++) {
+            if (Math.abs(lengths[i]-lengths[0])/lengths[0] > 0.15) {
+                isRhombus = false;
+                break;
+            }
+        }
+        return isRhombus ? "diamond" : "rectangle";
+    }
+
+    private boolean isCircle(MatOfPoint contour) {
+        Point center = new Point();
+        float[] radius = new float[1];
+        Imgproc.minEnclosingCircle(new MatOfPoint2f(contour.toArray()), center, radius);
+
+        double circleArea = Math.PI * Math.pow(radius[0], 2);
+        double contourArea = Imgproc.contourArea(contour);
+        return (contourArea/circleArea) > CIRCULARITY_THRESHOLD;
+    }
+
+    private boolean isStar(MatOfPoint contour) {
+        MatOfInt hull = new MatOfInt();
+        Imgproc.convexHull(contour, hull);
+
+        MatOfInt4 defects = new MatOfInt4();
+        Imgproc.convexityDefects(contour, hull, defects);
+
+        // ▼ 正确提取二维数组形态的凸缺陷数据
+        List<Integer> defectList = defects.toList(); // 这里实际得到一维的整数列表
+        int validDefects = 0;
+
+        // ▶ 改为按每4个元素为一组遍历（缺陷数据存储结构为连续的4个整数）
+        for (int i = 0; i < defectList.size(); i += 4) {
+            // ▲ 重要提示：每个缺陷由连续的4个int值构成
+            int depth = defectList.get(i + 3); // 第4个元素是深度值
+            if (depth / 256f > 20) { // 深度值需要除以256还原实际像素距离
+                validDefects++;
+            }
+        }
+        return validDefects >= 5;
+    }
+
+
+    private String detectColor(Mat src, MatOfPoint contour) {
+        Mat mask = Mat.zeros(src.size(), CvType.CV_8UC1);
+        Imgproc.drawContours(mask, List.of(contour), -1, new Scalar(255), -1);
+
+        Scalar mean = Core.mean(src, mask);
+        return findNearestColor(new double[]{mean.val[0], mean.val[1], mean.val[2]});
+    }
+
+    private String findNearestColor(double[] bgr) {
+        String closest = null;
+        double minDist = Double.MAX_VALUE;
+
+        for (Map.Entry<String, Scalar> entry : colorMap.entrySet()) {
+            double[] target = entry.getValue().val;
+            double dist = Math.sqrt(
+                    Math.pow(bgr[0]-target[0], 2) +
+                            Math.pow(bgr[1]-target[1], 2) +
+                            Math.pow(bgr[2]-target[2], 2));
+
+            if (dist < minDist && dist < COLOR_THRESHOLD) {
+                minDist = dist;
+                closest = entry.getKey();
+            }
+        }
+        return closest;
     }
 }

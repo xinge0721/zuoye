@@ -54,6 +54,7 @@ import car.bkrc.com.car2024.Utils.PicDisposeUtils.TrafficUtils;
  * 图像处理控制页面
  */
 public class PicInformationProcess extends Fragment implements View.OnClickListener {
+    myOpencv myOpencv = new myOpencv();
 
 
     // 识别结果文本
@@ -119,7 +120,6 @@ public class PicInformationProcess extends Fragment implements View.OnClickListe
                 break;
             case R.id.graphic_color_btn:
                 // 处理图形颜色识别点击事件的代码
-                myOpencv myOpencv = new myOpencv();
                 int[] pt = new int[] {0, 0, 0};
                 pt = myOpencv.detectColor(picBitmap);
                 if(pt[0] == 1)
@@ -145,8 +145,11 @@ public class PicInformationProcess extends Fragment implements View.OnClickListe
                 break;
             case R.id.graphic_shape_btn:
                 // 处理图形形状识别点击事件的代码
-
-                picrectext_tv.setText("识别图形形状,需要二次开发！");
+                String str= myOpencv.detect(picBitmap);
+                    if((str == null || str.trim().isEmpty()))
+                        picrectext_tv.setText("没有识别到");
+                    else
+                        picrectext_tv.setText("识别结果为："+str);
                 break;
             case R.id.opencv_shape_btn:
                 // 处理边缘检测点击事件
